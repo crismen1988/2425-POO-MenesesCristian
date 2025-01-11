@@ -1,3 +1,6 @@
+# Sistema para registro de calificaciones de estudiantes, segun sus materias
+
+
 class Asignatura:
     """
     Clase que representa una asignatura con su nombre y calificación.
@@ -100,5 +103,6 @@ class SistemaRegistro:
 
 # Ejecutar el programa
 if __name__ == "__main__":
+    print("**** SISTEMA DE REGISTRO DE CALIFIACIONES ****")
     sistema = SistemaRegistro()
     sistema.ejecutar()
