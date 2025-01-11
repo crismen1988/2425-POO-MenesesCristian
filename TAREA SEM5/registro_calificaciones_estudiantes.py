@@ -1,83 +1,104 @@
-# Programa para registrar las calificaciones de estudiantes en asignaturas fijas y calcular su promedio
-# Las asignaturas son fijas y predefinidas en el programa. Las calificaciones deben estar en el rango de 0 a 10.
-
-# Lista de asignaturas fijas
-asignaturas = [
-    "Matemáticas", "Ciencias Naturales", "Física",
-    "Estudios Sociales", "Química", "Cívica",
-    "Cultura Física", "Lengua y Literatura", "Inglés"
-]
-
-def ingresar_calificaciones():
+class Asignatura:
     """
-    Función que solicita las calificaciones de un estudiante para asignaturas fijas,
-    asegurándose de que las calificaciones estén en el rango de 0 a 10.
-    :return: Lista de calificaciones (list)
+    Clase que representa una asignatura con su nombre y calificación.
     """
-    calificaciones = []
-    print("Ingresa las calificaciones para las siguientes asignaturas (deben estar en el rango de 0 a 10):")
-    for asignatura in asignaturas:
+    def __init__(self, nombre):
+        self.nombre = nombre
+        self.calificacion = None  # Calificación inicialmente en blanco
+
+    def ingresar_calificacion(self):
+        """
+        Solicita al usuario que ingrese una calificación válida (0 a 10) para la asignatura.
+        """
         while True:
             try:
-                calificacion = float(input(f"{asignatura}: "))  # Ingresar calificación para cada asignatura
+                calificacion = float(input(f"Ingrese la calificación para {self.nombre}: "))
                 if 0 <= calificacion <= 10:
-                    calificaciones.append(calificacion)  # Guardar la calificación en la lista
-                    break  # Salir del bucle si la calificación es válida
+                    self.calificacion = calificacion
+                    break
                 else:
-                    print("Error: La calificación debe estar en el rango de 0 a 10. Inténtalo de nuevo.")
+                    print("Error: La calificación debe estar en el rango de 0 a 10.")
             except ValueError:
-                print("Error: Ingresa un número válido para la calificación.")
-    return calificaciones
+                print("Error: Ingresa un número válido.")
 
-def calcular_promedio(calificaciones):
-    """
-    Función que calcula el promedio de las calificaciones de un estudiante.
-    :param calificaciones: Lista de calificaciones (list)
-    :return: Promedio de las calificaciones (float)
-    """
-    if len(calificaciones) == 0:
-        return 0
-    return sum(calificaciones) / len(calificaciones)  # Calcular el promedio
 
-def registrar_estudiante():
+class Estudiante:
     """
-    Función que solicita el nombre y las calificaciones de un estudiante y devuelve un diccionario con la información.
-    :return: Diccionario con nombre y calificaciones del estudiante (dict)
+    Clase que representa a un estudiante con su nombre, asignaturas y promedio.
     """
-    nombre = input("Ingresa el nombre del estudiante: ")  # Solicitar nombre del estudiante
-    calificaciones = ingresar_calificaciones()  # Llamada a la función para ingresar las calificaciones
-    promedio = calcular_promedio(calificaciones)  # Calcular el promedio de las calificaciones
-    return {"nombre": nombre.capitalize(), "calificaciones": calificaciones, "promedio": promedio}  # Devolver la información
+    def __init__(self, nombre):
+        self.nombre = nombre.capitalize()
+        self.asignaturas = [Asignatura(nombre) for nombre in [
+            "Matemáticas", "Ciencias Naturales", "Física",
+            "Estudios Sociales", "Química", "Cívica",
+            "Cultura Física", "Lengua y Literatura", "Inglés"
+        ]]
+        self.promedio = 0.0
 
-def mostrar_resultados(estudiantes):
-    """
-    Función que muestra los resultados de los estudiantes, incluyendo sus calificaciones y promedios.
-    :param estudiantes: Lista de diccionarios con la información de los estudiantes (list)
-    """
-    for estudiante in estudiantes:
-        print(f"\nEstudiante: {estudiante['nombre']}")
-        for i, asignatura in enumerate(asignaturas):
-            print(f"{asignatura}: {estudiante['calificaciones'][i]}")  # Mostrar las calificaciones por asignatura
-        print(f"Promedio: {estudiante['promedio']:.2f}")
-        if estudiante["promedio"] >= 6:
-            print("Estado: Aprobado")
-        else:
-            print("Estado: Reprobado")
+    def ingresar_calificaciones(self):
+        """
+        Solicita las calificaciones para todas las asignaturas del estudiante.
+        """
+        print(f"\nIngresa las calificaciones para {self.nombre}:")
+        for asignatura in self.asignaturas:
+            asignatura.ingresar_calificacion()
 
-# Función principal que ejecuta el programa
-def main():
-    estudiantes = []  # Lista para almacenar los datos de los estudiantes
-    continuar = True
-    while continuar:
-        estudiante = registrar_estudiante()  # Registrar un nuevo estudiante
-        estudiantes.append(estudiante)  # Añadir el estudiante a la lista
-        respuesta = input("¿Deseas registrar otro estudiante? (s/n): ").lower()  # Preguntar si se desea continuar
-        if respuesta != "s":
-            continuar = False
+    def calcular_promedio(self):
+        """
+        Calcula el promedio de las calificaciones del estudiante.
+        """
+        total = sum(asignatura.calificacion for asignatura in self.asignaturas)
+        self.promedio = total / len(self.asignaturas)
 
-    # Mostrar los resultados de todos los estudiantes
-    mostrar_resultados(estudiantes)
+    def mostrar_resultados(self):
+        """
+        Muestra las calificaciones y el promedio del estudiante.
+        """
+        print(f"\nEstudiante: {self.nombre}")
+        for asignatura in self.asignaturas:
+            print(f"{asignatura.nombre}: {asignatura.calificacion}")
+        print(f"Promedio: {self.promedio:.2f}")
+        print("Estado:", "Aprobado" if self.promedio >= 6 else "Reprobado")
+
+
+class SistemaRegistro:
+    """
+    Clase que gestiona el registro y los resultados de los estudiantes.
+    """
+    def __init__(self):
+        self.estudiantes = []
+
+    def registrar_estudiante(self):
+        """
+        Registra un nuevo estudiante.
+        """
+        nombre = input("\nIngresa el nombre del estudiante: ")
+        estudiante = Estudiante(nombre)
+        estudiante.ingresar_calificaciones()
+        estudiante.calcular_promedio()
+        self.estudiantes.append(estudiante)
+
+    def mostrar_resultados(self):
+        """
+        Muestra los resultados de todos los estudiantes registrados.
+        """
+        print("\n--- Resultados de los estudiantes ---")
+        for estudiante in self.estudiantes:
+            estudiante.mostrar_resultados()
+
+    def ejecutar(self):
+        """
+        Ejecuta el sistema de registro de estudiantes.
+        """
+        while True:
+            self.registrar_estudiante()
+            continuar = input("¿Deseas registrar otro estudiante? (s/n): ").lower()
+            if continuar != 's':
+                break
+        self.mostrar_resultados()
+
 
 # Ejecutar el programa
 if __name__ == "__main__":
-    main()
+    sistema = SistemaRegistro()
+    sistema.ejecutar()
