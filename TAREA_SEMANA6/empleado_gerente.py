@@ -7,14 +7,14 @@ class Empleado:
         self.__salario = salario  # Atributo privado, no se puede acceder fuera de la clase
 
     # Método para mostrar la información del empleado
-    def mostrar_informacion(self):
+    def get_informacion(self):
         print(f"""Datos del Empleado 
               Nombre: {self.nombre} 
               Apellido: {self.apellido}
-              Salario: {self.__salario} $""")
+              Salario: {self.__salario:.2f} $""")
 
     # Método para modificar el salario
-    def modificar_salario(self):
+    def set_salario(self):
         print("Al empleado se le debe dar un aumento de salario")
         salir = False
         # Mientras no se ingrese un salario acorde el sistema seguira pidiendo un salario correcto
@@ -28,7 +28,7 @@ class Empleado:
                 print("El nuevo salario no debe ser menor al salario actual")
 
     # Método para obtener el salario (Encapsulación)
-    def obtener_salario(self):
+    def get_salario(self):
         return self.__salario  # Retorna el salario, no se puede acceder directamente al atributo privado
 
 
@@ -40,11 +40,11 @@ class Gerente(Empleado):  # Herencia de la clase Empleado
         self.cargo = cargo  # Atributo específico de la clase Gerente
 
     # Sobrescritura del método 'mostrar_informacion' (Polimorfismo)
-    def mostrar_informacion(self):
-        print(f"""Datos del Gerente 
+    def get_informacion(self):
+        print(f"""\nDatos del Gerente 
         Nombre: {self.nombre} 
         Apellido: {self.apellido}
-        Salario: {self.obtener_salario()} $
+        Salario: {self.get_salario():.2f} $
         Cargo: {self.cargo}""")  # Sobrescribe la informacion para agregar más detalles
 
 
@@ -53,15 +53,15 @@ def main():
     # Creación de un objeto de la clase Empleado (Definición de objeto)
     empleado = Empleado("Cristian", "Meneses", 460)
     # Llamada al método 'mostrar_informacion' de la clase base
-    empleado.mostrar_informacion()
+    empleado.get_informacion()
     # Modificación del salario del empleado
-    empleado.modificar_salario()
-    print(f"El nuevo salario de {empleado.nombre} {empleado.apellido} es: {empleado.obtener_salario()} $")
+    empleado.set_salario()
+    print(f"El nuevo salario de {empleado.nombre} {empleado.apellido} es: {empleado.get_salario():.2f} $")
 
     # Creación de un objeto de la clase Gerente (Definición de objeto, usando la clase derivada)
-    gerente = Gerente("Alexandra", "Moreta", 800, "Gerente")
+    gerente = Gerente("Alexandra", "Moreta", 800, "Gerente General")
     # Llamada al método 'mostrar_informacion' de la clase derivada (Polimorfismo)
-    gerente.mostrar_informacion()
+    gerente.get_informacion()
 
 # Ejecución del programa
 main()
