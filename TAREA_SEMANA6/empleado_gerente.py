@@ -7,25 +7,19 @@ class Empleado:
         self.__salario = salario  # Atributo privado, no se puede acceder fuera de la clase
 
     # Método para mostrar la información del empleado
-    def get_informacion(self):
+    def mostrar_informacion(self):
         print(f"""Datos del Empleado 
               Nombre: {self.nombre} 
               Apellido: {self.apellido}
               Salario: {self.__salario:.2f} $""")
 
     # Método para modificar el salario
-    def set_salario(self):
-        print("Al empleado se le debe dar un aumento de salario")
-        salir = False
-        # Mientras no se ingrese un salario acorde el sistema seguira pidiendo un salario correcto
-        while not salir:
-            nuevo_salario = float(input("Ingrese el nuevo salario del empleado: "))
-            # Aseguramos que el nuevo salario sea mayor que el actual
-            if nuevo_salario > self.__salario:
-                self.__salario = nuevo_salario
-                salir = True
-            else:
-                print("El nuevo salario no debe ser menor al salario actual")
+    def set_salario(self, nuevo_salario):
+        # Aseguramos que el nuevo salario sea mayor que el actual
+        if nuevo_salario > self.__salario:
+            self.__salario = nuevo_salario
+        else:
+            print("El nuevo salario no debe ser menor al salario actual")
 
     # Método para obtener el salario (Encapsulación)
     def get_salario(self):
@@ -40,28 +34,33 @@ class Gerente(Empleado):  # Herencia de la clase Empleado
         self.cargo = cargo  # Atributo específico de la clase Gerente
 
     # Sobrescritura del método 'mostrar_informacion' (Polimorfismo)
-    def get_informacion(self):
+    def mostrar_informacion(self):
         print(f"""\nDatos del Gerente 
         Nombre: {self.nombre} 
         Apellido: {self.apellido}
         Salario: {self.get_salario():.2f} $
-        Cargo: {self.cargo}""")  # Sobrescribe la informacion para agregar más detalles
+        Cargo: {self.get_cargo()}""")  # Sobrescribe la informacion para agregar más detalles
+
+    # Método para obtener el cargo (Encapsulación)
+    def get_cargo(self):
+        return self.cargo  # Retorna el cargo del gerente
 
 
 # Función principal para demostrar el uso de las clases y la herencia
 def main():
-    # Creación de un objeto de la clase Empleado (Definición de objeto)
+    # Creación de un objeto de la clase Empleado
     empleado = Empleado("Cristian", "Meneses", 460)
     # Llamada al método 'mostrar_informacion' de la clase base
-    empleado.get_informacion()
+    empleado.mostrar_informacion()
     # Modificación del salario del empleado
-    empleado.set_salario()
+    nuevo_salario = float(input("Ingrese el nuevo salario del empleado: "))
+    empleado.set_salario(nuevo_salario)
     print(f"El nuevo salario de {empleado.nombre} {empleado.apellido} es: {empleado.get_salario():.2f} $")
 
-    # Creación de un objeto de la clase Gerente (Definición de objeto, usando la clase derivada)
+    # Creación de un objeto de la clase Gerente
     gerente = Gerente("Alexandra", "Moreta", 800, "Gerente General")
-    # Llamada al método 'mostrar_informacion' de la clase derivada (Polimorfismo)
-    gerente.get_informacion()
+    # Llamada al método 'mostrar_informacion' de la clase derivada
+    gerente.mostrar_informacion()
 
 # Ejecución del programa
 main()
