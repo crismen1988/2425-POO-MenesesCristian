@@ -5,7 +5,7 @@ class Biblioteca:
         """
         self.nombre = nombre
         self.libros = []
-        print(f"Biblioteca '{self.nombre}' creada con éxito.\n")
+        print(f"La biblioteca {self.nombre} fue creada con éxito.\n")
 
     def agregar_libro(self, titulo):
         """
@@ -34,7 +34,7 @@ class Biblioteca:
 
 
 # Crear una biblioteca
-mi_biblioteca = Biblioteca("Biblioteca Central")
+mi_biblioteca = Biblioteca("Central")
 
 # Agregar libros
 mi_biblioteca.agregar_libro("Cien años de soledad")
