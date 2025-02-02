@@ -1,9 +1,16 @@
+#El nuevo código del dashboard hace uso de la librería colorama para mejorar la experiencia visual del usuario
+#con colores aplicados a los títulos, opciones de menú, mensajes de error, y otros textos relevantes.
+#Se añadio una espera breve antes de ejecutar el script para mejorar la fluidez de la interacción.
+#Se utilizaron colores llamativos para hacer que el menú y las interacciones sean más claras y atractivas para el usuario.
+#Estas modificaciones hacen que el código sea más visualmente atractivo y fácil de usar
+
+
 import os
 import subprocess
 import time
 from colorama import Fore, Style, init
 
-# Inicializa colorama para colorear texto en la consola (mejor presentación visual)
+# Inicializa colorama para colorear texto en la consola
 init(autoreset=True)
 
 def mostrar_codigo(ruta_script):
