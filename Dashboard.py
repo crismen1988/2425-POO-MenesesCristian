@@ -1,45 +1,50 @@
 import os
 import subprocess
+import time
+from colorama import Fore, Style, init
+
+# Inicializa colorama para colorear texto en la consola (mejor presentación visual)
+init(autoreset=True)
 
 def mostrar_codigo(ruta_script):
-    # Asegúrate de que la ruta al script es absoluta
-    ruta_script_absoluta = os.path.abspath(ruta_script)
+    """Muestra el contenido de un script Python en la consola."""
     try:
-        with open(ruta_script_absoluta, 'r') as archivo:
+        with open(ruta_script, 'r', encoding='utf-8') as archivo:
             codigo = archivo.read()
-            print(f"\n--- Código de {ruta_script} ---\n")
+            print(f"\n{Fore.CYAN}--- Código de {ruta_script} ---{Style.RESET_ALL}\n")
             print(codigo)
             return codigo
     except FileNotFoundError:
-        print("El archivo no se encontró.")
+        print(f"{Fore.RED}Error: El archivo no se encontró.{Style.RESET_ALL}")
         return None
     except Exception as e:
-        print(f"Ocurrió un error al leer el archivo: {e}")
+        print(f"{Fore.RED}Error al leer el archivo: {e}{Style.RESET_ALL}")
         return None
 
 def ejecutar_codigo(ruta_script):
+    """Ejecuta un script Python en una nueva ventana de terminal."""
     try:
         if os.name == 'nt':  # Windows
             subprocess.Popen(['cmd', '/k', 'python', ruta_script])
-        else:  # Unix-based systems
+        else:  # Mac/Linux
             subprocess.Popen(['xterm', '-hold', '-e', 'python3', ruta_script])
     except Exception as e:
-        print(f"Ocurrió un error al ejecutar el código: {e}")
+        print(f"{Fore.RED}Error al ejecutar el código: {e}{Style.RESET_ALL}")
 
 def mostrar_menu():
     # Define la ruta base donde se encuentra el dashboard.py
     ruta_base = os.path.dirname(__file__)
 
+    # Se definen manualmente las carpetas permitidas
     unidades = {
-        '1': 'Bloque 1',
-        '2': 'Bloque 2'
+        '1': os.path.join(ruta_base, 'Bloque 1'),
+        '2': os.path.join(ruta_base, 'Bloque 2')
     }
 
     while True:
         print("\nMenu Principal - Dashboard")
-        # Imprime las opciones del menú principal
-        for key in unidades:
-            print(f"{key} - {unidades[key]}")
+        for key, nombre in unidades.items():
+            print(f"{key} - {os.path.basename(nombre)}")
         print("0 - Salir")
 
         eleccion_unidad = input("Elige una unidad o '0' para salir: ")
@@ -47,21 +52,26 @@ def mostrar_menu():
             print("Saliendo del programa.")
             break
         elif eleccion_unidad in unidades:
-            mostrar_sub_menu(os.path.join(ruta_base, unidades[eleccion_unidad]))
+            mostrar_sub_menu(unidades[eleccion_unidad])  # Pasamos la ruta correcta
         else:
             print("Opción no válida. Por favor, intenta de nuevo.")
 
+
 def mostrar_sub_menu(ruta_unidad):
+    """Muestra las subcarpetas dentro de una unidad específica."""
     sub_carpetas = [f.name for f in os.scandir(ruta_unidad) if f.is_dir()]
 
     while True:
-        print("\nSubmenú - Selecciona una subcarpeta")
-        # Imprime las subcarpetas
-        for i, carpeta in enumerate(sub_carpetas, start=1):
-            print(f"{i} - {carpeta}")
-        print("0 - Regresar al menú principal")
+        print(f"\n{Fore.MAGENTA}{'='*30}")
+        print(f"  📂 SUBMENÚ - {os.path.basename(ruta_unidad)}")
+        print(f"{'='*30}{Style.RESET_ALL}")
 
-        eleccion_carpeta = input("Elige una subcarpeta o '0' para regresar: ")
+        # Mostrar las subcarpetas detectadas
+        for i, carpeta in enumerate(sub_carpetas, start=1):
+            print(f"{Fore.CYAN}{i}{Style.RESET_ALL} - {carpeta}")
+        print(f"{Fore.RED}0 - Regresar al menú principal{Style.RESET_ALL}")
+
+        eleccion_carpeta = input("\nElige una subcarpeta o '0' para regresar: ")
         if eleccion_carpeta == '0':
             break
         else:
@@ -70,26 +80,30 @@ def mostrar_sub_menu(ruta_unidad):
                 if 0 <= eleccion_carpeta < len(sub_carpetas):
                     mostrar_scripts(os.path.join(ruta_unidad, sub_carpetas[eleccion_carpeta]))
                 else:
-                    print("Opción no válida. Por favor, intenta de nuevo.")
+                    print(f"{Fore.RED}Opción no válida. Inténtalo de nuevo.{Style.RESET_ALL}")
             except ValueError:
-                print("Opción no válida. Por favor, intenta de nuevo.")
+                print(f"{Fore.RED}Por favor, ingresa un número válido.{Style.RESET_ALL}")
 
 def mostrar_scripts(ruta_sub_carpeta):
+    """Muestra los scripts disponibles en una subcarpeta y permite ejecutarlos."""
     scripts = [f.name for f in os.scandir(ruta_sub_carpeta) if f.is_file() and f.name.endswith('.py')]
 
     while True:
-        print("\nScripts - Selecciona un script para ver y ejecutar")
-        # Imprime los scripts
-        for i, script in enumerate(scripts, start=1):
-            print(f"{i} - {script}")
-        print("0 - Regresar al submenú anterior")
-        print("9 - Regresar al menú principal")
+        print(f"\n{Fore.LIGHTBLUE_EX}{'='*30}")
+        print(f"  📝 SCRIPTS DISPONIBLES")
+        print(f"{'='*30}{Style.RESET_ALL}")
 
-        eleccion_script = input("Elige un script, '0' para regresar o '9' para ir al menú principal: ")
+        # Mostrar los scripts disponibles en la carpeta
+        for i, script in enumerate(scripts, start=1):
+            print(f"{Fore.GREEN}{i}{Style.RESET_ALL} - {script}")
+        print(f"{Fore.RED}0 - Regresar al submenú anterior")
+        print(f"9 - Regresar al menú principal{Style.RESET_ALL}")
+
+        eleccion_script = input("\nElige un script, '0' para regresar o '9' para ir al menú principal: ")
         if eleccion_script == '0':
             break
         elif eleccion_script == '9':
-            return  # Regresar al menú principal
+            return
         else:
             try:
                 eleccion_script = int(eleccion_script) - 1
@@ -97,20 +111,19 @@ def mostrar_scripts(ruta_sub_carpeta):
                     ruta_script = os.path.join(ruta_sub_carpeta, scripts[eleccion_script])
                     codigo = mostrar_codigo(ruta_script)
                     if codigo:
-                        ejecutar = input("¿Desea ejecutar el script? (1: Sí, 0: No): ")
+                        ejecutar = input(f"{Fore.YELLOW}¿Deseas ejecutar el script? (1: Sí, 0: No): {Style.RESET_ALL}")
                         if ejecutar == '1':
+                            print(f"{Fore.BLUE}Ejecutando script...{Style.RESET_ALL}")
+                            time.sleep(1)
                             ejecutar_codigo(ruta_script)
-                        elif ejecutar == '0':
-                            print("No se ejecutó el script.")
                         else:
-                            print("Opción no válida. Regresando al menú de scripts.")
-                        input("\nPresiona Enter para volver al menú de scripts.")
+                            print(f"{Fore.RED}El script no fue ejecutado.{Style.RESET_ALL}")
+                        input(f"{Fore.CYAN}\nPresiona Enter para volver al menú de scripts.{Style.RESET_ALL}")
                 else:
-                    print("Opción no válida. Por favor, intenta de nuevo.")
+                    print(f"{Fore.RED}Opción no válida. Inténtalo de nuevo.{Style.RESET_ALL}")
             except ValueError:
-                print("Opción no válida. Por favor, intenta de nuevo.")
+                print(f"{Fore.RED}Por favor, ingresa un número válido.{Style.RESET_ALL}")
 
 # Ejecutar el dashboard
 if __name__ == "__main__":
     mostrar_menu()
-
