@@ -244,7 +244,7 @@ def menu():
                 print(Fore.RED + "Error: El ID debe ser un número entero.")
 
         elif opcion == "5":
-            # Muestra todo el inventario
+            # Muestratodo el inventario
             inventario.mostrar_inventario()
 
         elif opcion == "6":
